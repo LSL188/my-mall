@@ -1,10 +1,13 @@
 <template>
-    <div>
-home
+    <div class="home">
+        <nav-bar>
+            <div slot="middle">购物街</div>
+        </nav-bar>
     </div>
 </template>
 
 <script>
+import NavBar from 'components/common/navbar/NavBar'
 export default {
     data() {
         return {
@@ -15,7 +18,7 @@ export default {
 
     },
     components: {
-
+        NavBar
     },
     created() {
 
@@ -30,5 +33,7 @@ export default {
 </script>
 
 <style scoped lang="less">
+.home {
 
+}
 </style>
