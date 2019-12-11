@@ -6,7 +6,9 @@
     <home-swiper :banners="banner"></home-swiper>
     <home-recommend :recommends="recommend"></home-recommend>
     <home-week></home-week>
-    <tab-control :titles="['流行', '新款', '精选']" class="home-tab-control"></tab-control>
+    <tab-control :titles="['流行', '新款', '精选']" class="home-tab-control" @tabControlClick="homeTabClick"></tab-control>
+    <!-- <goods :goodslists="goodslist['pop'].list"></goods> -->
+    <goods :goodslists="showGoodsType"></goods>
 
     <ul>
       <li>12</li>
@@ -64,13 +66,20 @@ import HomeSwiper from "./childCpn/HomeSwiper";
 import HomeRecommend from "./childCpn/HomeRecommend";
 import HomeWeek from "./childCpn/HomeWeek";
 import TabControl from "components/content/tabcontrol/TabControl";
+import Goods from 'components/content/goods/Goods'
 
-import { getHomeData } from "network/home";
+import { getHomeData, getHomeGoods } from "network/home";
 export default {
   data() {
     return {
       banner: [],
-      recommend: []
+      recommend: [],
+      goodslist: {
+          'pop': {page: 0, list: []},
+          'new': {page: 0, list: []},
+          'sell': {page: 0, list: []},
+      },
+      currentType: 'pop'
     };
   },
   props: {},
@@ -79,21 +88,51 @@ export default {
     HomeSwiper,
     HomeRecommend,
     HomeWeek,
-    TabControl
+    TabControl,
+    Goods
   },
   created() {
     this._getHomeData();
+    this._getHomeGoods('pop')
+    this._getHomeGoods('new')
+    this._getHomeGoods('sell')
   },
-  mounted() {},
+  computed: {
+      showGoodsType() {
+          return this.goodslist[this.currentType].list
+      }
+  },
   methods: {
+    // 获取轮播图和推荐的数据
     _getHomeData() {
       getHomeData().then(res => {
-        console.log(res);
+        // console.log(res);
         this.banner = res.data.banner.list;
         // console.log(this.banner);
         this.recommend = res.data.recommend.list;
         // console.log(this.recommend);
       });
+    },
+    // 获取商品列表的数据
+    _getHomeGoods(type) {
+        const page = this.goodslist[type].page + 1
+        getHomeGoods(type, page).then(res => {
+            // console.log(res)
+            this.goodslist[type].list.push(...res.data.list)
+            this.goodslist[type].page += 1
+        })
+    },
+    // 修改pop写死的值，动态接收tabControl子组件的点击事件传来的index
+    homeTabClick(i) {
+        // console.log(i)
+        if (i === 0) {
+            this.currentType = 'pop'
+        } else if(i === 1) {
+            this.currentType = 'new'
+        } else {
+            this.currentType = 'sell'
+        }
+        // console.log(this.currentType)
     }
   }
 };
@@ -112,6 +151,7 @@ export default {
   .home-tab-control {
       position: sticky;
       top: 44px;
+      z-index: 2;
   }
 }
 </style>
