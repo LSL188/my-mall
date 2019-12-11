@@ -3,33 +3,29 @@
     <nav-bar>
       <div slot="middle">购物街</div>
     </nav-bar>
-    <swiper>
-      <swiper-item v-for="(item, i) in banner" :key="i">
-        <a :href="item.link">
-          <img :src="item.image" alt="" />
-        </a>
-      </swiper-item>
-    </swiper>
+    <home-swiper :banners="banner"></home-swiper>
+    <home-recommend :recommends="recommend"></home-recommend>
   </div>
 </template>
 
 <script>
 import NavBar from "components/common/navbar/NavBar";
-import { Swiper, SwiperItem } from "components/common/swiper";
+import HomeSwiper from './childCpn/HomeSwiper'
+import HomeRecommend from './childCpn/HomeRecommend'
 
 import { getHomeData } from "network/home";
 export default {
   data() {
     return {
-      banner: {},
-      recommend: {}
+      banner: [],
+      recommend: []
     };
   },
   props: {},
   components: {
     NavBar,
-    Swiper,
-    SwiperItem
+    HomeSwiper,
+    HomeRecommend
   },
   created() {
     this._getHomeData();
