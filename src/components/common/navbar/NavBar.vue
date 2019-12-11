@@ -23,7 +23,7 @@ export default {
 .nav-bar {
   height: 44px;
   line-height: 44px;
-  background-color: pink;
+  background-color: @navColor;
   color: #fff;
   display: flex;
   text-align: center;
