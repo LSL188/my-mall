@@ -3,6 +3,14 @@
     <nav-bar class="home-nav">
       <div slot="middle">购物街</div>
     </nav-bar>
+    <!-- 吸顶时替换用 -->
+    <tab-control
+      :titles="['流行', '新款', '精选']"
+      class="tab-control-fixed"
+      @tabControlClick="homeTabClick"
+      ref="tabControlOne"
+      v-show="isTabControlFixed"
+    ></tab-control>
 
     <scroll
       class="wrapper"
@@ -12,13 +20,17 @@
       :pull-up-load="true"
       @pullingUp="wrapperPullUp"
     >
-      <home-swiper :banners="banner"></home-swiper>
+      <home-swiper
+        :banners="banner"
+        @swiperImgLoad="homeSwiperImgLoad"
+      ></home-swiper>
       <home-recommend :recommends="recommend"></home-recommend>
       <home-week></home-week>
       <tab-control
         :titles="['流行', '新款', '精选']"
         class="home-tab-control"
         @tabControlClick="homeTabClick"
+        ref="tabControl"
       ></tab-control>
       <!-- <goods :goodslists="goodslist['pop'].list"></goods> -->
       <goods :goodslists="showGoodsType"></goods>
@@ -39,7 +51,7 @@ import BackTop from "components/content/backtop/BackTop";
 
 import { getHomeData, getHomeGoods } from "network/home";
 
-import {debounce} from 'common/utils'
+import { debounce } from "common/utils";
 export default {
   data() {
     return {
@@ -51,7 +63,9 @@ export default {
         sell: { page: 0, list: [] }
       },
       currentType: "pop",
-      isShowBackTop: false
+      isShowBackTop: false,
+      TabControlTop: 0,
+      isTabControlFixed: false
     };
   },
   props: {},
@@ -75,10 +89,10 @@ export default {
   },
   mounted() {
     // 监听图片加载完成,调用防抖函数
-    const newRefresh = debounce(this.$refs.scroll.refresh, 500)
+    const newRefresh = debounce(this.$refs.scroll.refresh, 500);
     this.$bus.$on("itemImgLoad", () => {
-      console.log('img finish')
-      newRefresh()
+      // console.log('img finish')
+      newRefresh();
     });
   },
   computed: {
@@ -118,6 +132,8 @@ export default {
         this.currentType = "sell";
       }
       // console.log(this.currentType);
+      this.$refs.tabControl.currentIndex = i;
+      this.$refs.tabControlOne.currentIndex = i;
     },
     // 回到顶部
     backTopClick() {
@@ -126,12 +142,20 @@ export default {
     // 显示/隐藏回到顶部
     wrapperScroll(position) {
       // console.log(position)
+      // 回到顶部
       this.isShowBackTop = -position.y > 1000;
+      // tab-control显示与隐藏
+      this.isTabControlFixed = -position.y > this.TabControlTop;
     },
     // 上拉加载更多
     wrapperPullUp() {
       // console.log('加载更多')
       this._getHomeGoods(this.currentType);
+    },
+    // 监听轮播图图片加载完毕
+    homeSwiperImgLoad() {
+      // console.log('home img')
+      this.TabControlTop = this.$refs.tabControl.$el.offsetTop;
     }
   }
 };
@@ -149,10 +173,10 @@ export default {
     right: 0;
     z-index: 2;
   }
-  .home-tab-control {
-    position: sticky;
-    top: 44px;
-    z-index: 2;
+
+  .tab-control-fixed {
+    position: relative;
+    z-index: 9;
   }
 
   .wrapper {

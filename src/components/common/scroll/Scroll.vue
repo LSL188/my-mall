@@ -53,7 +53,7 @@ export default {
       this.scroll && this.scroll.finishPullUp()
     },
     refresh() {
-      console.log('120')
+      // console.log('120')
       this.scroll && this.scroll.refresh()
     }
   }
