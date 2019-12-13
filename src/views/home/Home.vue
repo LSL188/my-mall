@@ -4,18 +4,19 @@
       <div slot="middle">购物街</div>
     </nav-bar>
 
-    <scroll class="wrapper">
-        <home-swiper :banners="banner"></home-swiper>
-        <home-recommend :recommends="recommend"></home-recommend>
-        <home-week></home-week>
-        <tab-control
-          :titles="['流行', '新款', '精选']"
-          class="home-tab-control"
-          @tabControlClick="homeTabClick"
-        ></tab-control>
-        <!-- <goods :goodslists="goodslist['pop'].list"></goods> -->
-        <goods :goodslists="showGoodsType"></goods>
+    <scroll class="wrapper" ref="scroll" :probe-type="3" @scroll="wrapperScroll">
+      <home-swiper :banners="banner"></home-swiper>
+      <home-recommend :recommends="recommend"></home-recommend>
+      <home-week></home-week>
+      <tab-control
+        :titles="['流行', '新款', '精选']"
+        class="home-tab-control"
+        @tabControlClick="homeTabClick"
+      ></tab-control>
+      <!-- <goods :goodslists="goodslist['pop'].list"></goods> -->
+      <goods :goodslists="showGoodsType"></goods>
     </scroll>
+    <back-top @click.native="backTopClick" v-show="isShowBackTop"></back-top>
   </div>
 </template>
 
@@ -27,6 +28,7 @@ import HomeWeek from "./childCpn/HomeWeek";
 import TabControl from "components/content/tabcontrol/TabControl";
 import Goods from "components/content/goods/Goods";
 import Scroll from "components/common/scroll/Scroll";
+import BackTop from "components/content/backtop/BackTop";
 
 import { getHomeData, getHomeGoods } from "network/home";
 export default {
@@ -39,7 +41,8 @@ export default {
         new: { page: 0, list: [] },
         sell: { page: 0, list: [] }
       },
-      currentType: "pop"
+      currentType: "pop",
+      isShowBackTop:false
     };
   },
   props: {},
@@ -50,7 +53,8 @@ export default {
     HomeWeek,
     TabControl,
     Goods,
-    Scroll
+    Scroll,
+    BackTop
   },
   created() {
     this._getHomeData();
@@ -94,6 +98,15 @@ export default {
         this.currentType = "sell";
       }
       // console.log(this.currentType);
+    },
+    // 回到顶部
+    backTopClick() {
+      this.$refs.scroll.scrollTo(0, 0)
+    },
+    // 显示/隐藏回到顶部
+    wrapperScroll(position) {
+      // console.log(position)
+      this.isShowBackTop = -(position.y) > 1000
     }
   }
 };
@@ -101,7 +114,7 @@ export default {
 
 <style scoped lang="less">
 .home {
-    // height: 100vh;
+  // height: 100vh;
   padding-top: 44px;
   position: relative;
   .home-nav {

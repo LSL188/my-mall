@@ -14,19 +14,33 @@ export default {
       scroll: null
     };
   },
+  props: {
+    probeType: {
+      type: Number,
+      default: 0
+    }
+  },
   mounted() {
     const options = {
       click: true,
-      probeType: 3,
-      pullUpLoad:true
+      probeType: this.probeType,
+      pullUpLoad: true
     };
     this.scroll = new BScroll(this.$refs.wrapper, options);
-    this.scroll.on("scroll", position => {
-      console.log(position);
+    if (this.probeType === 2 || this.probeType === 3) {
+      this.scroll.on("scroll", position => {
+        // console.log(position);
+        this.$emit("scroll", position);
+      });
+    }
+    this.scroll.on("pullingUp", () => {
+      // console.log("上拉加载更多");
     });
-    this.scroll.on('pullingUp', () => {
-      console.log('上拉加载更多')
-    })
+  },
+  methods: {
+    scrollTo(x, y, time = 300) {
+      this.scroll.scrollTo(x, y, time);
+    }
   }
 };
 </script>
