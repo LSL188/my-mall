@@ -65,7 +65,8 @@ export default {
       currentType: "pop",
       isShowBackTop: false,
       TabControlTop: 0,
-      isTabControlFixed: false
+      isTabControlFixed: false,
+      saveY: 0
     };
   },
   props: {},
@@ -94,6 +95,13 @@ export default {
       // console.log('img finish')
       newRefresh();
     });
+  },
+  deactivated() {
+    this.saveY = this.$refs.scroll.getSrollY()
+  },
+  activated() {
+    this.$refs.scroll.scrollTo(0, this.saveY, 0)
+    this.$refs.scroll.refresh()
   },
   computed: {
     showGoodsType() {
