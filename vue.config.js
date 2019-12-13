@@ -1,22 +1,25 @@
-const path = require('path')
+const path = require("path");
 module.exports = {
-    configureWebpack: {
-        resolve: {
-            alias: {
-                'assets': '@/assets',
-                'components': '@/components',
-                'network': '@/network',
-                'common': '@/common',
-                'views': '@/views'
-            }
-        }
-    },
-
-    pluginOptions: {
-      'style-resources-loader': {
-        preProcessor: 'less',
-        patterns: [path.resolve(__dirname, 'src/assets/css/index.less')]
-
+  configureWebpack: {
+    resolve: {
+      alias: {
+        assets: "@/assets",
+        components: "@/components",
+        network: "@/network",
+        common: "@/common",
+        views: "@/views"
       }
     }
-}
+  },
+  pluginOptions: {
+    "style-resources-loader": {
+      preProcessor: "less",
+      patterns: [path.resolve(__dirname, "src/assets/css/index.less")]
+    }
+  },
+  devServer: {
+    open: true,
+    host: 'localhost',
+    port: 8000
+  }
+};

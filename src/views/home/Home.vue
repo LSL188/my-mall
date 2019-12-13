@@ -3,60 +3,19 @@
     <nav-bar class="home-nav">
       <div slot="middle">购物街</div>
     </nav-bar>
-    <home-swiper :banners="banner"></home-swiper>
-    <home-recommend :recommends="recommend"></home-recommend>
-    <home-week></home-week>
-    <tab-control :titles="['流行', '新款', '精选']" class="home-tab-control" @tabControlClick="homeTabClick"></tab-control>
-    <!-- <goods :goodslists="goodslist['pop'].list"></goods> -->
-    <goods :goodslists="showGoodsType"></goods>
 
-    <ul>
-      <li>12</li>
-      <li>22</li>
-      <li>32</li>
-      <li>42</li>
-      <li>52</li>
-      <li>42</li>
-      <li>52</li>
-      <li>62</li>
-      <li>72</li>
-      <li>82</li>
-      <li>52</li>
-      <li>42</li>
-      <li>52</li>
-      <li>62</li>
-      <li>72</li>
-      <li>82</li>
-      <li>52</li>
-      <li>42</li>
-      <li>52</li>
-      <li>62</li>
-      <li>72</li>
-      <li>82</li>
-      <li>52</li>
-      <li>42</li>
-      <li>52</li>
-      <li>62</li>
-      <li>72</li>
-      <li>82</li>
-      <li>92</li>
-      <li>102</li>
-      <li>62</li>
-      <li>72</li>
-      <li>82</li>
-      <li>92</li>
-      <li>102</li>
-      <li>112</li>
-      <li>122</li>
-      <li>132</li>
-      <li>142</li>
-      <li>152</li>
-      <li>162</li>
-      <li>172</li>
-      <li>182</li>
-      <li>192</li>
-      <li>202</li>
-    </ul>
+    <scroll class="wrapper">
+        <home-swiper :banners="banner"></home-swiper>
+        <home-recommend :recommends="recommend"></home-recommend>
+        <home-week></home-week>
+        <tab-control
+          :titles="['流行', '新款', '精选']"
+          class="home-tab-control"
+          @tabControlClick="homeTabClick"
+        ></tab-control>
+        <!-- <goods :goodslists="goodslist['pop'].list"></goods> -->
+        <goods :goodslists="showGoodsType"></goods>
+    </scroll>
   </div>
 </template>
 
@@ -66,7 +25,8 @@ import HomeSwiper from "./childCpn/HomeSwiper";
 import HomeRecommend from "./childCpn/HomeRecommend";
 import HomeWeek from "./childCpn/HomeWeek";
 import TabControl from "components/content/tabcontrol/TabControl";
-import Goods from 'components/content/goods/Goods'
+import Goods from "components/content/goods/Goods";
+import Scroll from "components/common/scroll/Scroll";
 
 import { getHomeData, getHomeGoods } from "network/home";
 export default {
@@ -75,11 +35,11 @@ export default {
       banner: [],
       recommend: [],
       goodslist: {
-          'pop': {page: 0, list: []},
-          'new': {page: 0, list: []},
-          'sell': {page: 0, list: []},
+        pop: { page: 0, list: [] },
+        new: { page: 0, list: [] },
+        sell: { page: 0, list: [] }
       },
-      currentType: 'pop'
+      currentType: "pop"
     };
   },
   props: {},
@@ -89,18 +49,19 @@ export default {
     HomeRecommend,
     HomeWeek,
     TabControl,
-    Goods
+    Goods,
+    Scroll
   },
   created() {
     this._getHomeData();
-    this._getHomeGoods('pop')
-    this._getHomeGoods('new')
-    this._getHomeGoods('sell')
+    this._getHomeGoods("pop");
+    this._getHomeGoods("new");
+    this._getHomeGoods("sell");
   },
   computed: {
-      showGoodsType() {
-          return this.goodslist[this.currentType].list
-      }
+    showGoodsType() {
+      return this.goodslist[this.currentType].list;
+    }
   },
   methods: {
     // 获取轮播图和推荐的数据
@@ -115,24 +76,24 @@ export default {
     },
     // 获取商品列表的数据
     _getHomeGoods(type) {
-        const page = this.goodslist[type].page + 1
-        getHomeGoods(type, page).then(res => {
-            // console.log(res)
-            this.goodslist[type].list.push(...res.data.list)
-            this.goodslist[type].page += 1
-        })
+      const page = this.goodslist[type].page + 1;
+      getHomeGoods(type, page).then(res => {
+        // console.log(res)
+        this.goodslist[type].list.push(...res.data.list);
+        this.goodslist[type].page += 1;
+      });
     },
     // 修改pop写死的值，动态接收tabControl子组件的点击事件传来的index
     homeTabClick(i) {
-        // console.log(i)
-        if (i === 0) {
-            this.currentType = 'pop'
-        } else if(i === 1) {
-            this.currentType = 'new'
-        } else {
-            this.currentType = 'sell'
-        }
-        // console.log(this.currentType)
+      // console.log(i);
+      if (i === 0) {
+        this.currentType = "pop";
+      } else if (i === 1) {
+        this.currentType = "new";
+      } else {
+        this.currentType = "sell";
+      }
+      // console.log(this.currentType);
     }
   }
 };
@@ -140,7 +101,9 @@ export default {
 
 <style scoped lang="less">
 .home {
+    // height: 100vh;
   padding-top: 44px;
+  position: relative;
   .home-nav {
     position: fixed;
     top: 0;
@@ -149,9 +112,19 @@ export default {
     z-index: 2;
   }
   .home-tab-control {
-      position: sticky;
-      top: 44px;
-      z-index: 2;
+    position: sticky;
+    top: 44px;
+    z-index: 2;
+  }
+
+  .wrapper {
+    // height: calc(100% - 93px);
+    position: absolute;
+    top: 44px;
+    bottom: 49px;
+    left: 0;
+    right: 0;
+    // overflow: hidden;
   }
 }
 </style>
