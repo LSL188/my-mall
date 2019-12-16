@@ -97,11 +97,11 @@ export default {
     });
   },
   deactivated() {
-    this.saveY = this.$refs.scroll.getSrollY()
+    this.saveY = this.$refs.scroll.getSrollY();
   },
   activated() {
-    this.$refs.scroll.scrollTo(0, this.saveY, 0)
-    this.$refs.scroll.refresh()
+    this.$refs.scroll.scrollTo(0, this.saveY, 0);
+    this.$refs.scroll.refresh();
   },
   computed: {
     showGoodsType() {
@@ -180,6 +180,8 @@ export default {
     left: 0;
     right: 0;
     z-index: 2;
+    background-color: @navColor;
+    color: #fff;
   }
 
   .tab-control-fixed {
