@@ -19,7 +19,7 @@ module.exports = {
   },
   devServer: {
     open: true,
-    host: 'localhost',
+    host: '192.168.1.6',
     port: 8000
   }
 };

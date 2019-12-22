@@ -47,11 +47,10 @@ import HomeWeek from "./childCpn/HomeWeek";
 import TabControl from "components/content/tabcontrol/TabControl";
 import Goods from "components/content/goods/Goods";
 import Scroll from "components/common/scroll/Scroll";
-import BackTop from "components/content/backtop/BackTop";
 
 import { getHomeData, getHomeGoods } from "network/home";
 
-import { debounce } from "common/utils";
+import { allItemImgLoadMixin, backTopMixin } from "common/mixin"
 export default {
   data() {
     return {
@@ -63,12 +62,12 @@ export default {
         sell: { page: 0, list: [] }
       },
       currentType: "pop",
-      isShowBackTop: false,
       TabControlTop: 0,
       isTabControlFixed: false,
-      saveY: 0
+      saveY: 0,
     };
   },
+  mixins: [allItemImgLoadMixin, backTopMixin],
   props: {},
   components: {
     NavBar,
@@ -77,8 +76,7 @@ export default {
     HomeWeek,
     TabControl,
     Goods,
-    Scroll,
-    BackTop
+    Scroll
   },
   created() {
     // 请求轮播图和推荐的数据
@@ -89,15 +87,11 @@ export default {
     this._getHomeGoods("sell");
   },
   mounted() {
-    // 监听图片加载完成,调用防抖函数
-    const newRefresh = debounce(this.$refs.scroll.refresh, 500);
-    this.$bus.$on("itemImgLoad", () => {
-      // console.log('img finish')
-      newRefresh();
-    });
+    // console.log('home-mixin')
   },
   deactivated() {
     this.saveY = this.$refs.scroll.getSrollY();
+    this.$bus.$off('itemImgLoad', this.allImgLoad)
   },
   activated() {
     this.$refs.scroll.scrollTo(0, this.saveY, 0);
@@ -142,10 +136,6 @@ export default {
       // console.log(this.currentType);
       this.$refs.tabControl.currentIndex = i;
       this.$refs.tabControlOne.currentIndex = i;
-    },
-    // 回到顶部
-    backTopClick() {
-      this.$refs.scroll.scrollTo(0, 0);
     },
     // 显示/隐藏回到顶部
     wrapperScroll(position) {
